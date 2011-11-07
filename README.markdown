@@ -103,7 +103,7 @@ you'd like to publish to a different Posterous site, just override the
 `posterous:siteId` setting.
 
 You'll need to create a login on [Posterous] if you haven't done that
-yet. See above, under sbt 0.10 or 0.7, for instructions.
+yet. See above, under sbt 0.11.x or 0.7, for instructions.
 
 Once you've identified yourself, you can check your setup with the
 `posterous:check` action (`check-posterous` in sbt 0.7). This will
