@@ -38,6 +38,7 @@ object Publish extends Plugin {
   val check = TaskKey[Unit]("check")
   val requiredInputs = TaskKey[Unit]("required-inputs")
   val dupCheck = TaskKey[Unit]("dup-check")
+  val apiKey = SettingKey[String]("api-key")
 
   val posterousSettings: Seq[sbt.Project.Setting[_]] =
       inConfig(Posterous)(Seq(
@@ -68,7 +69,8 @@ object Publish extends Plugin {
     requiredInputs <<= requiredInputsTask,
     dupCheck <<= dupCheckTask,
     email := None,
-    password := None
+    password := None,
+    apiKey := ""
   ))
 
   /** The content to be posted, transformed into xml. Default impl
@@ -88,16 +90,17 @@ object Publish extends Plugin {
       ))
     }
   private def publishNotesTask =
-    (body, email, password, siteId,
+    (body, email, password, siteId, apiKey,
      title, tags, dupCheck, streams) map {
-      (body, emailOpt, passOpt, siteId, title, tags, _, s) =>
+      (body, emailOpt, passOpt, siteId, token, title, tags, _, s) =>
         val pass = require(passOpt, password)
         val em = require(emailOpt, email)
         val newpost = posterousApi(em, pass) / "sites" / siteId.toString / "posts" << Map(
           "post[title]" -> title,
           "post[tags]" -> tags.map { _.replace(",","_") }.toSet.mkString(","),
           "post[body]" -> body.mkString,
-          "post[source]" -> postSource.toString
+          "post[source]" -> postSource.toString,
+          "api_token" -> token
         )
         http { _(newpost <> { rsp =>
           (rsp \ "post" \ "url").headOption match {
