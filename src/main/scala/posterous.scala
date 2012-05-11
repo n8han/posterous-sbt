@@ -220,7 +220,7 @@ object Publish extends Plugin {
     if(e.getCause eq null) e else rootCause(e.getCause)
     
   private def posterousApi(email: String, password:String) =
-    :/("posterous.com").secure / "api" as_! (email, password)
+    :/("posterous.com").secure / "api/2" as_! (email, password)
 
   def http[T](block: Http => T) {
     val h = new Http
