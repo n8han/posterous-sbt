@@ -102,15 +102,18 @@ object Publish extends Plugin {
           "post[source]" -> postSource.toString,
           "api_token" -> token
         )
-        http { _(newpost <> { rsp =>
-          (rsp \ "post" \ "url").headOption match {
-            case None => Some("No post URL found in response:\n" + rsp.mkString)
-            case Some(url) =>
-              s.log.success("Posted release notes: " + url.text)
-              tryBrowse(new URI(url.text), None)
+        import scala.util.parsing.json.JSON
+        http { _(newpost >- { rsp =>
+          JSON.parseFull(rsp).map(_.asInstanceOf[Map[String, Any]]) match {
+            case Some(json) => 
+              val url = json("full_url").toString
+              s.log.success("Posted release notes: " + url)
+              tryBrowse(new URI(url), None)
               None
+            case _ => Some("No post URL found in response:\n" + rsp.mkString)
           }
         }) }
+        
     }
 
   private def previewNotesTask = 
