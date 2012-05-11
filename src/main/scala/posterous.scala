@@ -93,12 +93,11 @@ object Publish extends Plugin {
       (body, emailOpt, passOpt, siteId, title, tags, _, s) =>
         val pass = require(passOpt, password)
         val em = require(emailOpt, email)
-        val newpost = posterousApi(em, pass) / "newpost" << Map(
-          "site_id" -> siteId.toString,
-          "title" -> title,
-          "tags" -> tags.map { _.replace(",","_") }.toSet.mkString(","),
-          "body" -> body.mkString,
-          "source" -> postSource.toString
+        val newpost = posterousApi(em, pass) / "sites" / siteId.toString / "posts" << Map(
+          "post[title]" -> title,
+          "post[tags]" -> tags.map { _.replace(",","_") }.toSet.mkString(","),
+          "post[body]" -> body.mkString,
+          "post[source]" -> postSource.toString
         )
         http { _(newpost <> { rsp =>
           (rsp \ "post" \ "url").headOption match {
