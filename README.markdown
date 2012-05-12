@@ -20,7 +20,8 @@ addSbtPlugin("net.databinder" % "posterous-sbt" % "0.3.2")
 ### User settings
 
 You also need to apply the plugin settings and set your Posterous
-email and password. You can do this in one place for all your
+email and password. You need to get an api key at http://posterous.com/api. 
+You can do this in one place for all your
 projects:
 
 **~/.sbt/user.sbt**
@@ -31,6 +32,8 @@ seq(posterousSettings :_*)
 (email in Posterous) := Some("you@example.com")
 
 (password in Posterous) := Some("yourpassword")
+
+(apiKey in Posterous) := "your api key you get from http://posterous.com/api"
 ```
 
 ### Project-specific settings
